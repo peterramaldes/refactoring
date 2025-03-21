@@ -8,6 +8,30 @@ function main() {
 }
 
 function statement(invoice, plays) {
+  let totalAmount = 0;
+  let volumeCredits = 0;
+  let result = `Statement for ${invoice.customer}\n`
+  const format = new Intl.NumberFormat("en-US",
+    { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format;
+
+  for (let perf of invoice.performances) {
+    let thisAmount = amountFor(perf);
+
+    // Sum credits per volume
+    volumeCredits += Math.max(perf.audience - 30, 0)
+
+    // Sum extra credit each comedy audience
+    if ("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
+
+    // Show the line for this request
+    result += ` ${playFor(perf).name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
+    totalAmount += thisAmount;
+  }
+
+  result += `Amount owned is ${format(totalAmount / 100)}\n`;
+  result += `You earned ${volumeCredits} credits\n`;
+  return result;
+
   function playFor(aPerformance) {
     return plays[aPerformance.playID];
   }
@@ -33,30 +57,6 @@ function statement(invoice, plays) {
     }
     return result;
   }
-
-  let totalAmount = 0;
-  let volumeCredits = 0;
-  let result = `Statement for ${invoice.customer}\n`
-  const format = new Intl.NumberFormat("en-US",
-    { style: "currency", currency: "USD", minimumFractionDigits: 2 }).format;
-
-  for (let perf of invoice.performances) {
-    let thisAmount = amountFor(perf);
-
-    // Sum credits per volume
-    volumeCredits += Math.max(perf.audience - 30, 0)
-
-    // Sum extra credit each comedy audience
-    if ("comedy" === playFor(perf).type) volumeCredits += Math.floor(perf.audience / 5);
-
-    // Show the line for this request
-    result += ` ${playFor(perf).name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
-    totalAmount += thisAmount;
-  }
-
-  result += `Amount owned is ${format(totalAmount / 100)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
-  return result;
 }
 
 
