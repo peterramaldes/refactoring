@@ -1,4 +1,4 @@
-const statement = require('../index');
+const statement = require('../statement');
 
 const normalize = (str) => str.replace(/\s+/g, ' ').trim();
 

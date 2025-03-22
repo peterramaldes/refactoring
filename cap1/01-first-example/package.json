@@ -1,9 +1,9 @@
 {
   "name": "01-first-example",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "statement.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node statement.js",
     "test": "jest"
   },
   "keywords": [],
