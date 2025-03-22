@@ -4,18 +4,31 @@ function main() {
   const invoices = require('./invoices.json');
   const plays = require('./plays.json');
   const result = statement(invoices[0], plays);
-  console.log(result);
+  // console.log(result);
 }
 
 function statement(invoice, plays) {
-  return renderPlainText(invoice, plays);
+  const statementData = {};
+  statementData.customer = invoice.customer;
+  statementData.performances = invoice.performances.map(enrichPerformance);
+  return renderPlainText(statementData, plays);
+
+  function enrichPerformance(aPerformance) {
+    const result = Object.assign({}, aPerformance);
+    result.play = playFor(result);
+    return result;
+  }
+
+  function playFor(aPerformance) {
+    return plays[aPerformance.playID];
+  }
 }
 
-function renderPlainText(invoice, plays) {
-  let result = `Statement for ${invoice.customer}\n`
+function renderPlainText(data) {
+  let result = `Statement for ${data.customer}\n`
 
-  for (let perf of invoice.performances) {
-    result += ` ${playFor(perf).name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
+  for (let perf of data.performances) {
+    result += ` ${perf.play.name}: ${usd(amountFor(perf))} (${perf.audience} seats)\n`;
   }
 
   result += `Amount owned is ${usd(totalAmount())}\n`;
@@ -24,7 +37,7 @@ function renderPlainText(invoice, plays) {
 
   function totalAmount() {
     let result = 0;
-    for (let perf of invoice.performances) {
+    for (let perf of data.performances) {
       result += amountFor(perf);
     }
     return result;
@@ -32,19 +45,15 @@ function renderPlainText(invoice, plays) {
 
   function totalVolumeCredits() {
     let result = 0;
-    for (let perf of invoice.performances) {
+    for (let perf of data.performances) {
       result += volumeCreditsFor(perf);
     }
     return result;
   }
 
-  function playFor(aPerformance) {
-    return plays[aPerformance.playID];
-  }
-
   function amountFor(aPerformance) {
     let result = 0;
-    switch (playFor(aPerformance).type) {
+    switch (aPerformance.play.type) {
       case "tragedy":
         result = 40000;
         if (aPerformance.audience > 30) {
@@ -67,7 +76,7 @@ function renderPlainText(invoice, plays) {
   function volumeCreditsFor(aPerformance) {
     let result = 0;
     result += Math.max(aPerformance.audience - 30, 0);
-    if ("comedy" === playFor(aPerformance).type)
+    if ("comedy" === aPerformance.play.type)
       result += Math.floor(aPerformance.audience / 5);
     return result;
   }
