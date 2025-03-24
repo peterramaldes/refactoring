@@ -1,4 +1,5 @@
 const { statement, htmlStatement } = require('../statement');
+const createStatementData = require('../createStatementData');
 
 const normalize = (str) => str.replace(/\s+/g, ' ').trim();
 
@@ -17,7 +18,7 @@ test('plainText', () => {
   `;
 
   expect(normalize(result)).toEqual(normalize(expectedResult));
-})
+});
 
 test('html', () => {
   const invoices = require('../invoices.json');
@@ -53,4 +54,54 @@ test('html', () => {
   `;
 
   expect(normalize(result)).toEqual(normalize(expectedResult));
-})
+});
+
+test('createStatementData', () => {
+  // Given
+  const invoices = require('../invoices.json');
+  const plays = require('../plays.json');
+
+  // When
+  const statementData = createStatementData(invoices[0], plays);
+
+  // Then
+  const expected = {
+    "customer": "BigCo",
+    "performances": [
+      {
+        "playID": "hamlet",
+        "audience": 55,
+        "play": {
+          "name": "Hamlet",
+          "type": "tragedy"
+        },
+        "amount": 65000,
+        "volumeCredits": 25
+      },
+      {
+        "playID": "as-like",
+        "audience": 35,
+        "play": {
+          "name": "As You Like It",
+          "type": "comedy"
+        },
+        "amount": 58000,
+        "volumeCredits": 12
+      },
+      {
+        "playID": "othello",
+        "audience": 40,
+        "play": {
+          "name": "Othello",
+          "type": "tragedy"
+        },
+        "amount": 50000,
+        "volumeCredits": 10
+      }
+    ],
+    "totalAmount": 173000,
+    "totalVolumeCredits": 47
+  };
+
+  expect(statementData).toEqual(expected);
+});
