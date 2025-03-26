@@ -1,13 +1,14 @@
 module.exports = createStatementData;
 
 class PerformanceCalculator {
+
   constructor(aPerformance, aPlay) {
     this.performance = aPerformance;
     this.play = aPlay;
   }
 
   get amount() {
-    throw new Error('subclass responsability');
+    throw new Error('subclass responsibility');
   }
 
   get volumeCredits() {
@@ -25,7 +26,6 @@ class TragedyCalculator extends PerformanceCalculator {
     }
     return result;
   }
-
 }
 
 class ComedyCalculator extends PerformanceCalculator {
@@ -43,6 +43,7 @@ class ComedyCalculator extends PerformanceCalculator {
     return super.volumeCredits + Math.floor(this.performance.audience / 5);
 
   }
+
 }
 
 function createPerformanceCalculator(aPerformance, play) {
