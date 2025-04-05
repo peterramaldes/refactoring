@@ -39,14 +39,22 @@ class Province {
     return result;
   }
 
+  get demandValue() {
+    return this.satisfiedDemand * this.price;
+  }
+
+  get satisfiedDemand() {
+    return Math.min(this._demand, this.totalProduction); a
+  }
+
   get name() { return this._name; }
   get producers() { return this._producers; }
   get totalProduction() { return this._totalProduction; }
   set totalProduction(arg) { this._totalProduction = arg; }
   get demand() { return this._demand; }
   set demand(arg) { this._demand = arg; }
-  get price() { return this.price; }
-  set price(arg) { this._price = arg; }
+  get price() { return this._price; }
+  set price(arg) { this._price = parseInt(arg); }
 
 }
 
